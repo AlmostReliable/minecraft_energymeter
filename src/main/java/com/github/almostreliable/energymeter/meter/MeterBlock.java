@@ -84,7 +84,7 @@ public class MeterBlock extends Block implements EntityBlock {
 
         var blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof MenuProvider entity && player instanceof ServerPlayer serverPlayer) {
-            NetworkHooks.openScreen(serverPlayer, entity, pos);
+            serverPlayer.openMenu(entity, pos);
         }
         return InteractionResult.CONSUME;
     }

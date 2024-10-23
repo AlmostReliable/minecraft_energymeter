@@ -1,12 +1,10 @@
 package com.github.almostreliable.energymeter.component;
 
-import net.minecraft.core.Direction;
-
 import com.github.almostreliable.energymeter.meter.MeterBlockEntity;
 import com.github.almostreliable.energymeter.util.TypeEnums.IO_SETTING;
 import com.github.almostreliable.energymeter.util.TypeEnums.MODE;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraft.core.Direction;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,10 +19,10 @@ public record SidedEnergyStorage(MeterBlockEntity parent, Direction side) implem
      * @return a list of all created instances
      */
     @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
-    public static List<LazyOptional<SidedEnergyStorage>> create(MeterBlockEntity parent) {
+    public static List<SidedEnergyStorage> create(MeterBlockEntity parent) {
         return Arrays
             .stream(Direction.values())
-            .map(direction -> LazyOptional.of(() -> new SidedEnergyStorage(parent, direction)))
+            .map(direction -> new SidedEnergyStorage(parent, direction))
             .toList();
     }
 

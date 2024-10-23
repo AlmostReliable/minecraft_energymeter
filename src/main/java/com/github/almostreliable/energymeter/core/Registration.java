@@ -1,27 +1,27 @@
 package com.github.almostreliable.energymeter.core;
 
+import com.almostreliable.energymeter.ModConstants;
+import com.github.almostreliable.energymeter.meter.MeterBlock;
+import com.github.almostreliable.energymeter.meter.MeterBlockEntity;
+import com.github.almostreliable.energymeter.meter.MeterMenu;
+import com.github.almostreliable.energymeter.util.Utils;
 import net.minecraft.Util;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
-
-import com.almostreliable.energymeter.ModConstants;
-
-import com.github.almostreliable.energymeter.meter.MeterBlock;
-import com.github.almostreliable.energymeter.util.Utils;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredBlock;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.RegisterEvent;
 
 public final class Registration {
 
+    private static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ModConstants.MOD_ID);
     private static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(ModConstants.MOD_ID);
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(ModConstants.MOD_ID);
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(
@@ -35,51 +35,41 @@ public final class Registration {
 
     public static final DeferredBlock<MeterBlock> METER_BLOCK = Util.make(() -> {
         var block = BLOCKS.registerBlock(
-            Constants.METER_ID,
-            MeterBlock::new,
-            BlockBehaviour.Properties.of().strength(2f).mapColor(MapColor.METAL).sound(SoundType.METAL)
+                Constants.METER_ID,
+                MeterBlock::new,
+                BlockBehaviour.Properties.of().strength(2f).mapColor(MapColor.METAL).sound(SoundType.METAL)
         );
         ITEMS.registerSimpleBlockItem(block);
         return block;
     });
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MeterBlockEntity>> METER_BLOCK_ENTITY = BLOCK_ENTITIES.register(
+            Constants.METER_ID, () -> BlockEntityType.Builder.of(MeterBlockEntity::new, METER_BLOCK.get()).build(null)
+    );
+
+    public static final DeferredHolder<MenuType<?>, MenuType<MeterMenu>> METER = MENUS.register("meter", () ->
+            IMenuTypeExtension.create((containerID, inventory, data) -> {
+                var entity = (MeterBlockEntity) inventory.player.level().getBlockEntity(data.readBlockPos());
+                return new MeterMenu(entity, containerID);
+            }));
+
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB = CREATIVE_TABS.register(
+            "tab", () -> CreativeModeTab.builder()
+                    .title(Utils.translate("itemGroup", "tab"))
+                    .icon(METER_BLOCK::toStack)
+                    .noScrollBar()
+                    .displayItems((features, output) -> {
+                        output.accept(METER_BLOCK);
+                    }).build()
+    );
+
     private Registration() {}
 
     public static void init(IEventBus modEventBus) {
-        modEventBus.addListener(Registration::registerContents);
-        modEventBus.addListener(Tab::initContents);
-
+        CREATIVE_TABS.register(modEventBus);
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
         MENUS.register(modEventBus);
-    }
-
-    private static void registerContents(RegisterEvent event) {
-        if (event.getRegistryKey() == Registries.CREATIVE_MODE_TAB) {
-            Tab.registerTab(event);
-        }
-    }
-
-    public static final class Tab {
-
-        public static final ResourceKey<CreativeModeTab> TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, Utils.getRL("tab"));
-        private static final CreativeModeTab TAB = CreativeModeTab.builder()
-            .title(Utils.translate("itemGroup", "tab"))
-            .icon(METER_BLOCK::toStack)
-            .noScrollBar()
-            .build();
-
-        private Tab() {}
-
-        private static void initContents(BuildCreativeModeTabContentsEvent event) {
-            if (event.getTabKey() == TAB_KEY) {
-                event.accept(METER_BLOCK);
-            }
-        }
-
-        private static void registerTab(RegisterEvent registerEvent) {
-            registerEvent.register(Registries.CREATIVE_MODE_TAB, TAB_KEY.location(), () -> TAB);
-        }
     }
 }

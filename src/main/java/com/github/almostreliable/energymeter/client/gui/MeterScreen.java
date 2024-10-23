@@ -88,7 +88,6 @@ public class MeterScreen extends AbstractContainerScreen<MeterMenu> {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mX, int mY, float partial) {
-        renderBackground(guiGraphics);
         super.render(guiGraphics, mX, mY, partial);
         renderTooltip(guiGraphics, mX, mY);
     }

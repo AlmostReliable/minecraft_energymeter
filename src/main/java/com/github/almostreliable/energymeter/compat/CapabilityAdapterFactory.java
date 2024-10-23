@@ -3,7 +3,7 @@ package com.github.almostreliable.energymeter.compat;
 import com.github.almostreliable.energymeter.compat.cct.MeterPeripheral;
 import com.github.almostreliable.energymeter.compat.cct.PeripheralAdapter;
 import com.github.almostreliable.energymeter.meter.MeterBlockEntity;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 
 import javax.annotation.Nullable;
 

@@ -1,22 +1,28 @@
 package com.github.almostreliable.energymeter.network;
 
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
-
 import com.github.almostreliable.energymeter.component.SideConfiguration;
 import com.github.almostreliable.energymeter.core.Constants.SYNC_FLAGS;
 import com.github.almostreliable.energymeter.meter.MeterBlockEntity;
-import com.github.almostreliable.energymeter.network.ServerToClientPacket;
 import com.github.almostreliable.energymeter.util.TypeEnums.ACCURACY;
 import com.github.almostreliable.energymeter.util.TypeEnums.MODE;
 import com.github.almostreliable.energymeter.util.TypeEnums.NUMBER_MODE;
 import com.github.almostreliable.energymeter.util.TypeEnums.STATUS;
+import com.github.almostreliable.energymeter.util.Utils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.Objects;
 
-public class ClientSyncPacket extends ServerToClientPacket<ClientSyncPacket> {
+public class ClientSyncPacket implements CustomPacketPayload {
+    static final Type<ClientSyncPacket> TYPE = new Type<>(Utils.getRL("client_sync"));
+    static final StreamCodec<FriendlyByteBuf, ClientSyncPacket> STREAM_CODEC = CustomPacketPayload.codec(
+            ClientSyncPacket::encode,
+            ClientSyncPacket::decode);
 
     private BlockPos pos;
     private int flags;
@@ -36,7 +42,7 @@ public class ClientSyncPacket extends ServerToClientPacket<ClientSyncPacket> {
     ) {
         this.pos = pos;
         this.flags = flags;
-        this.sideConfig = sideConfig.serializeNBT();
+        this.sideConfig = sideConfig.serializeNBT(null); //TODO: Check if this is valid
         this.transferRate = transferRate;
         this.numberMode = numberMode;
         this.status = status;
@@ -48,8 +54,7 @@ public class ClientSyncPacket extends ServerToClientPacket<ClientSyncPacket> {
 
     public ClientSyncPacket() {}
 
-    @Override
-    public void encode(ClientSyncPacket packet, FriendlyByteBuf buffer) {
+    public static void encode(ClientSyncPacket packet, FriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.pos);
         buffer.writeInt(packet.flags);
         if ((packet.flags & SYNC_FLAGS.SIDE_CONFIG) != 0) buffer.writeNbt(packet.sideConfig);
@@ -62,8 +67,7 @@ public class ClientSyncPacket extends ServerToClientPacket<ClientSyncPacket> {
         if ((packet.flags & SYNC_FLAGS.THRESHOLD) != 0) buffer.writeInt(packet.threshold);
     }
 
-    @Override
-    public ClientSyncPacket decode(FriendlyByteBuf buffer) {
+    public static ClientSyncPacket decode(FriendlyByteBuf buffer) {
         var packet = new ClientSyncPacket();
         packet.pos = buffer.readBlockPos();
         packet.flags = buffer.readInt();
@@ -79,17 +83,24 @@ public class ClientSyncPacket extends ServerToClientPacket<ClientSyncPacket> {
     }
 
     @Override
-    protected void handlePacket(ClientSyncPacket packet, ClientLevel level) {
-        var entity = level.getBlockEntity(packet.pos);
-        if (entity instanceof MeterBlockEntity tile) {
-            if ((packet.flags & SYNC_FLAGS.SIDE_CONFIG) != 0) tile.getSideConfig().deserializeNBT(packet.sideConfig);
-            if ((packet.flags & SYNC_FLAGS.TRANSFER_RATE) != 0) tile.setTransferRate(packet.transferRate);
-            if ((packet.flags & SYNC_FLAGS.NUMBER_MODE) != 0) tile.setNumberMode(packet.numberMode);
-            if ((packet.flags & SYNC_FLAGS.STATUS) != 0) tile.setStatus(packet.status);
-            if ((packet.flags & SYNC_FLAGS.MODE) != 0) tile.setMode(packet.mode);
-            if ((packet.flags & SYNC_FLAGS.ACCURACY) != 0) tile.setAccuracy(packet.accuracy);
-            if ((packet.flags & SYNC_FLAGS.INTERVAL) != 0) tile.setInterval(packet.interval);
-            if ((packet.flags & SYNC_FLAGS.THRESHOLD) != 0) tile.setThreshold(packet.threshold);
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
+
+    public static void handle(ClientSyncPacket payload, IPayloadContext context) {
+        Player player = context.player();
+        if (player != null) {
+            var entity = player.level().getBlockEntity(payload.pos);
+            if (entity instanceof MeterBlockEntity tile) {
+                if ((payload.flags & SYNC_FLAGS.SIDE_CONFIG) != 0) tile.getSideConfig().deserializeNBT(player.registryAccess(), payload.sideConfig);
+                if ((payload.flags & SYNC_FLAGS.TRANSFER_RATE) != 0) tile.setTransferRate(payload.transferRate);
+                if ((payload.flags & SYNC_FLAGS.NUMBER_MODE) != 0) tile.setNumberMode(payload.numberMode);
+                if ((payload.flags & SYNC_FLAGS.STATUS) != 0) tile.setStatus(payload.status);
+                if ((payload.flags & SYNC_FLAGS.MODE) != 0) tile.setMode(payload.mode);
+                if ((payload.flags & SYNC_FLAGS.ACCURACY) != 0) tile.setAccuracy(payload.accuracy);
+                if ((payload.flags & SYNC_FLAGS.INTERVAL) != 0) tile.setInterval(payload.interval);
+                if ((payload.flags & SYNC_FLAGS.THRESHOLD) != 0) tile.setThreshold(payload.threshold);
+            }
         }
     }
 }
