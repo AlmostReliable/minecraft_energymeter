@@ -1,18 +1,19 @@
 package com.github.almostreliable.energymeter.meter;
 
-import com.github.almostreliable.energymeter.core.Setup.Containers;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 
+import com.github.almostreliable.energymeter.core.Setup.Containers;
+
 import java.util.Objects;
 
-public class MeterContainer extends AbstractContainerMenu {
+public class MeterMenu extends AbstractContainerMenu {
 
-    private final MeterEntity entity;
+    private final MeterBlockEntity entity;
 
-    public MeterContainer(MeterEntity entity, int windowID) {
+    public MeterMenu(MeterBlockEntity entity, int windowID) {
         super(Containers.METER.get(), windowID);
         this.entity = entity;
     }
@@ -31,7 +32,7 @@ public class MeterContainer extends AbstractContainerMenu {
         );
     }
 
-    public MeterEntity getEntity() {
+    public MeterBlockEntity getEntity() {
         return entity;
     }
 }

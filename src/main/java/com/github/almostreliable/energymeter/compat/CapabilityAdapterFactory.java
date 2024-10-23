@@ -2,7 +2,7 @@ package com.github.almostreliable.energymeter.compat;
 
 import com.github.almostreliable.energymeter.compat.cct.MeterPeripheral;
 import com.github.almostreliable.energymeter.compat.cct.PeripheralAdapter;
-import com.github.almostreliable.energymeter.meter.MeterEntity;
+import com.github.almostreliable.energymeter.meter.MeterBlockEntity;
 import net.minecraftforge.fml.ModList;
 
 import javax.annotation.Nullable;
@@ -23,7 +23,7 @@ public final class CapabilityAdapterFactory {
      */
     @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
     @Nullable
-    public static ICapabilityAdapter<MeterPeripheral> createMeterPeripheral(MeterEntity entity) {
+    public static ICapabilityAdapter<MeterPeripheral> createMeterPeripheral(MeterBlockEntity entity) {
         if (ModList.get().isLoaded(CCT_ID)) {
             return new PeripheralAdapter(entity);
         }

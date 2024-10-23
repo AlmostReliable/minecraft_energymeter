@@ -1,10 +1,5 @@
 package com.github.almostreliable.energymeter.client;
 
-import com.github.almostreliable.energymeter.meter.MeterBlock;
-import com.github.almostreliable.energymeter.meter.MeterEntity;
-import com.github.almostreliable.energymeter.util.TextUtils;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -14,10 +9,16 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
+
+import com.github.almostreliable.energymeter.meter.MeterBlock;
+import com.github.almostreliable.energymeter.meter.MeterBlockEntity;
+import com.github.almostreliable.energymeter.util.TextUtils;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class MeterRenderer implements BlockEntityRenderer<MeterEntity> {
+public class MeterRenderer implements BlockEntityRenderer<MeterBlockEntity> {
 
     private static final float[] ANGLE = {0, 0, 0, 180, 90, -90};
     private static final float PIXEL_SIZE = .3f / 16;
@@ -47,7 +48,7 @@ public class MeterRenderer implements BlockEntityRenderer<MeterEntity> {
     @SuppressWarnings("ConstantConditions")
     @Override
     public void render(
-        MeterEntity entity, float partial, PoseStack stack, MultiBufferSource buffer, int packedLight, int packedOverlay
+        MeterBlockEntity entity, float partial, PoseStack stack, MultiBufferSource buffer, int packedLight, int packedOverlay
     ) {
         // turn off display if player is too far away
         LocalPlayer player = Minecraft.getInstance().player;
@@ -63,7 +64,8 @@ public class MeterRenderer implements BlockEntityRenderer<MeterEntity> {
         // move and rotate the position according to the facing
         stack.translate(vector.x(), vector.y(), vector.z());
         if (facing == bottom) {
-            stack.mulPose(new Quaternionf().rotateXYZ(0,
+            stack.mulPose(new Quaternionf().rotateXYZ(
+                0,
                 ANGLE[facing.ordinal()] * Mth.DEG_TO_RAD,
                 180 * Mth.DEG_TO_RAD
             ));
@@ -91,7 +93,8 @@ public class MeterRenderer implements BlockEntityRenderer<MeterEntity> {
 
     @SuppressWarnings("DataFlowIssue")
     private void drawText(String text, float y, PoseStack stack, MultiBufferSource buffer) {
-        font.drawInBatch(text,
+        font.drawInBatch(
+            text,
             font.width(text) / -2f,
             y,
             ChatFormatting.WHITE.getColor(),

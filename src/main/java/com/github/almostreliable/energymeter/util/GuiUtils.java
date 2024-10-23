@@ -22,12 +22,12 @@ public final class GuiUtils {
      * This method handles the translation and scaling of the text in order
      * to maintain the same position after the scaling.
      *
-     * @param stack the stack for the drawing
-     * @param x     the x position
-     * @param y     the y position
-     * @param scale the scale of the text
-     * @param text  the text to draw
-     * @param color the color of the text as decimal
+     * @param guiGraphics the gui graphics
+     * @param x           the x position
+     * @param y           the y position
+     * @param scale       the scale of the text
+     * @param text        the text to draw
+     * @param color       the color of the text as decimal
      */
     public static void renderText(GuiGraphics guiGraphics, int x, int y, float scale, String text, int color) {
         PoseStack stack = guiGraphics.pose();

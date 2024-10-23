@@ -1,17 +1,18 @@
-package com.github.almostreliable.energymeter.network.packets;
+package com.github.almostreliable.energymeter.network;
+
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 
 import com.github.almostreliable.energymeter.component.SideConfiguration;
 import com.github.almostreliable.energymeter.core.Constants.SYNC_FLAGS;
-import com.github.almostreliable.energymeter.meter.MeterEntity;
+import com.github.almostreliable.energymeter.meter.MeterBlockEntity;
 import com.github.almostreliable.energymeter.network.ServerToClientPacket;
 import com.github.almostreliable.energymeter.util.TypeEnums.ACCURACY;
 import com.github.almostreliable.energymeter.util.TypeEnums.MODE;
 import com.github.almostreliable.energymeter.util.TypeEnums.NUMBER_MODE;
 import com.github.almostreliable.energymeter.util.TypeEnums.STATUS;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.Objects;
 
@@ -80,7 +81,7 @@ public class ClientSyncPacket extends ServerToClientPacket<ClientSyncPacket> {
     @Override
     protected void handlePacket(ClientSyncPacket packet, ClientLevel level) {
         var entity = level.getBlockEntity(packet.pos);
-        if (entity instanceof MeterEntity tile) {
+        if (entity instanceof MeterBlockEntity tile) {
             if ((packet.flags & SYNC_FLAGS.SIDE_CONFIG) != 0) tile.getSideConfig().deserializeNBT(packet.sideConfig);
             if ((packet.flags & SYNC_FLAGS.TRANSFER_RATE) != 0) tile.setTransferRate(packet.transferRate);
             if ((packet.flags & SYNC_FLAGS.NUMBER_MODE) != 0) tile.setNumberMode(packet.numberMode);

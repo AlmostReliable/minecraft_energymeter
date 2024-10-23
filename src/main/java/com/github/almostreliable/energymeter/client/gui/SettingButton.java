@@ -1,8 +1,15 @@
 package com.github.almostreliable.energymeter.client.gui;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.TextColor;
+
 import com.github.almostreliable.energymeter.core.Constants.UI_COLORS;
 import com.github.almostreliable.energymeter.network.PacketHandler;
-import com.github.almostreliable.energymeter.network.packets.SettingUpdatePacket;
+import com.github.almostreliable.energymeter.network.SettingUpdatePacket;
 import com.github.almostreliable.energymeter.util.GuiUtils;
 import com.github.almostreliable.energymeter.util.GuiUtils.TooltipBuilder;
 import com.github.almostreliable.energymeter.util.TextUtils;
@@ -10,12 +17,6 @@ import com.github.almostreliable.energymeter.util.TypeEnums.ACCURACY;
 import com.github.almostreliable.energymeter.util.TypeEnums.MODE;
 import com.github.almostreliable.energymeter.util.TypeEnums.SETTING;
 import com.github.almostreliable.energymeter.util.TypeEnums.TRANSLATE_TYPE;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextColor;
 
 public class SettingButton extends GenericButton {
 
@@ -126,15 +127,18 @@ public class SettingButton extends GenericButton {
             .translate(TRANSLATE_TYPE.TOOLTIP, "current", ChatFormatting.GREEN)
             .append(TextUtils.colorize(": ", ChatFormatting.GREEN));
         switch (setting) {
-            case NUMBER -> currentSetting.append(TextUtils.translate(TRANSLATE_TYPE.NUMBER,
+            case NUMBER -> currentSetting.append(TextUtils.translate(
+                TRANSLATE_TYPE.NUMBER,
                 container.getEntity().getNumberMode().toString().toLowerCase(),
                 ChatFormatting.WHITE
             ));
-            case MODE -> currentSetting.append(TextUtils.translate(TRANSLATE_TYPE.MODE,
+            case MODE -> currentSetting.append(TextUtils.translate(
+                TRANSLATE_TYPE.MODE,
                 container.getEntity().getMode().toString().toLowerCase(),
                 ChatFormatting.WHITE
             ));
-            case ACCURACY -> currentSetting.append(TextUtils.translate(TRANSLATE_TYPE.ACCURACY,
+            case ACCURACY -> currentSetting.append(TextUtils.translate(
+                TRANSLATE_TYPE.ACCURACY,
                 container.getEntity().getAccuracy().toString().toLowerCase(),
                 ChatFormatting.WHITE
             ));

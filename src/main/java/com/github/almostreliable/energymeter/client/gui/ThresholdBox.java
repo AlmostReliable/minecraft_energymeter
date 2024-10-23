@@ -1,9 +1,10 @@
 package com.github.almostreliable.energymeter.client.gui;
 
-import com.github.almostreliable.energymeter.meter.MeterEntity;
+import net.minecraft.client.gui.Font;
+
+import com.github.almostreliable.energymeter.meter.MeterBlockEntity;
 import com.github.almostreliable.energymeter.util.GuiUtils.TooltipBuilder;
 import com.github.almostreliable.energymeter.util.TypeEnums.TEXT_BOX;
-import net.minecraft.client.gui.Font;
 
 class ThresholdBox extends GenericTextBox {
 
@@ -33,7 +34,7 @@ class ThresholdBox extends GenericTextBox {
         try {
             newValue = Math.min(value, Integer.parseInt(screen.getIntervalBox().getValue()));
         } catch (NumberFormatException e) {
-            newValue = MeterEntity.REFRESH_RATE;
+            newValue = MeterBlockEntity.REFRESH_RATE;
         }
         super.changeTextBoxValue(newValue, sync);
     }

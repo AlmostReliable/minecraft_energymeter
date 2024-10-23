@@ -1,16 +1,17 @@
 package com.github.almostreliable.energymeter.client.gui;
 
-import com.github.almostreliable.energymeter.meter.MeterContainer;
-import com.github.almostreliable.energymeter.util.GuiUtils;
-import com.github.almostreliable.energymeter.util.TextUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 
+import com.github.almostreliable.energymeter.meter.MeterMenu;
+import com.github.almostreliable.energymeter.util.GuiUtils;
+import com.github.almostreliable.energymeter.util.TextUtils;
+
 public abstract class GenericButton extends Button {
 
-    final MeterContainer container;
+    final MeterMenu container;
     final MeterScreen screen;
 
     GenericButton(MeterScreen screen, int pX, int pY, int width, int height) {

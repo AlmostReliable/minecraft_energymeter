@@ -1,10 +1,5 @@
 package com.github.almostreliable.energymeter.client.gui;
 
-import com.github.almostreliable.energymeter.meter.MeterContainer;
-import com.github.almostreliable.energymeter.util.GuiUtils;
-import com.github.almostreliable.energymeter.util.GuiUtils.TooltipBuilder;
-import com.github.almostreliable.energymeter.util.TextUtils;
-import com.github.almostreliable.energymeter.util.TypeEnums.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -14,12 +9,32 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
+import com.github.almostreliable.energymeter.meter.MeterMenu;
+import com.github.almostreliable.energymeter.util.GuiUtils;
+import com.github.almostreliable.energymeter.util.GuiUtils.TooltipBuilder;
+import com.github.almostreliable.energymeter.util.TextUtils;
+import com.github.almostreliable.energymeter.util.TypeEnums.ACCURACY;
+import com.github.almostreliable.energymeter.util.TypeEnums.BLOCK_SIDE;
+import com.github.almostreliable.energymeter.util.TypeEnums.MODE;
+import com.github.almostreliable.energymeter.util.TypeEnums.NUMBER_MODE;
+import com.github.almostreliable.energymeter.util.TypeEnums.SETTING;
+import com.github.almostreliable.energymeter.util.TypeEnums.TRANSLATE_TYPE;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static com.github.almostreliable.energymeter.core.Constants.*;
+import static com.github.almostreliable.energymeter.core.Constants.ACCURACY_ID;
+import static com.github.almostreliable.energymeter.core.Constants.IO_MODE_ID;
+import static com.github.almostreliable.energymeter.core.Constants.IO_SCREEN_ID;
+import static com.github.almostreliable.energymeter.core.Constants.IO_SIDE_ID;
+import static com.github.almostreliable.energymeter.core.Constants.METER_ID;
+import static com.github.almostreliable.energymeter.core.Constants.MODE_ID;
+import static com.github.almostreliable.energymeter.core.Constants.SIDE_CONFIG_ID;
+import static com.github.almostreliable.energymeter.core.Constants.STATUS_ID;
+import static com.github.almostreliable.energymeter.core.Constants.TRANSFER_RATE_ID;
+import static com.github.almostreliable.energymeter.core.Constants.UI_COLORS;
 
-public class MeterScreen extends AbstractContainerScreen<MeterContainer> {
+public class MeterScreen extends AbstractContainerScreen<MeterMenu> {
 
     private static final ResourceLocation TEXTURE = TextUtils.getRL("textures/gui/meter.png");
     private static final int TEXTURE_WIDTH = 199;
@@ -30,7 +45,7 @@ public class MeterScreen extends AbstractContainerScreen<MeterContainer> {
     private ThresholdBox thresholdBox;
 
     @SuppressWarnings("AssignmentToSuperclassField")
-    public MeterScreen(MeterContainer container, Inventory inventory, Component name) {
+    public MeterScreen(MeterMenu container, Inventory inventory, Component name) {
         super(container, inventory, name);
         imageWidth = TEXTURE_WIDTH;
         imageHeight = TEXTURE_HEIGHT;
@@ -44,7 +59,8 @@ public class MeterScreen extends AbstractContainerScreen<MeterContainer> {
             .addComponent(TextUtils
                 .translate(TRANSLATE_TYPE.TOOLTIP, IO_SIDE_ID, ChatFormatting.GREEN)
                 .append(TextUtils.colorize(": ", ChatFormatting.GREEN))
-                .append(TextUtils.translate(TRANSLATE_TYPE.BLOCK_SIDE,
+                .append(TextUtils.translate(
+                    TRANSLATE_TYPE.BLOCK_SIDE,
                     BLOCK_SIDE.FRONT.toString().toLowerCase(),
                     ChatFormatting.WHITE
                 )))
@@ -90,7 +106,8 @@ public class MeterScreen extends AbstractContainerScreen<MeterContainer> {
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int pX, int pY) {
         // header
-        GuiUtils.renderText(guiGraphics,
+        GuiUtils.renderText(
+            guiGraphics,
             11,
             9,
             1.3f,
@@ -99,17 +116,20 @@ public class MeterScreen extends AbstractContainerScreen<MeterContainer> {
         );
 
         // transfer rate
-        GuiUtils.renderText(guiGraphics,
+        GuiUtils.renderText(
+            guiGraphics,
             11,
             26,
             1.1f,
             TextUtils.translateAsString(TRANSLATE_TYPE.LABEL, TRANSFER_RATE_ID) + ':',
             UI_COLORS.GRAY
         );
-        var formattedFlow = TextUtils.formatEnergy(menu.getEntity().getTransferRate(),
+        var formattedFlow = TextUtils.formatEnergy(
+            menu.getEntity().getTransferRate(),
             menu.getEntity().getNumberMode() == NUMBER_MODE.LONG
         );
-        GuiUtils.renderText(guiGraphics,
+        GuiUtils.renderText(
+            guiGraphics,
             16,
             37,
             1.0f,
@@ -118,14 +138,16 @@ public class MeterScreen extends AbstractContainerScreen<MeterContainer> {
         );
 
         // status
-        GuiUtils.renderText(guiGraphics,
+        GuiUtils.renderText(
+            guiGraphics,
             11,
             50,
             1.1f,
             TextUtils.translateAsString(TRANSLATE_TYPE.LABEL, STATUS_ID) + ':',
             UI_COLORS.GRAY
         );
-        GuiUtils.renderText(guiGraphics,
+        GuiUtils.renderText(
+            guiGraphics,
             16,
             61,
             1.0f,
@@ -134,14 +156,16 @@ public class MeterScreen extends AbstractContainerScreen<MeterContainer> {
         );
 
         // mode
-        GuiUtils.renderText(guiGraphics,
+        GuiUtils.renderText(
+            guiGraphics,
             11,
             74,
             1.1f,
             TextUtils.translateAsString(TRANSLATE_TYPE.LABEL, MODE_ID) + ':',
             UI_COLORS.GRAY
         );
-        GuiUtils.renderText(guiGraphics,
+        GuiUtils.renderText(
+            guiGraphics,
             16,
             85,
             1.0f,
@@ -150,18 +174,21 @@ public class MeterScreen extends AbstractContainerScreen<MeterContainer> {
         );
 
         // accuracy
-        GuiUtils.renderText(guiGraphics,
+        GuiUtils.renderText(
+            guiGraphics,
             11,
             98,
             1.1f,
             TextUtils.translateAsString(TRANSLATE_TYPE.LABEL, ACCURACY_ID) + ':',
             UI_COLORS.GRAY
         );
-        GuiUtils.renderText(guiGraphics,
+        GuiUtils.renderText(
+            guiGraphics,
             16,
             109,
             1.0f,
-            TextUtils.translateAsString(TRANSLATE_TYPE.ACCURACY,
+            TextUtils.translateAsString(
+                TRANSLATE_TYPE.ACCURACY,
                 menu.getEntity().getAccuracy().toString().toLowerCase()
             ),
             getAccuracyColor()

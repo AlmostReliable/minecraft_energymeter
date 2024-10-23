@@ -1,9 +1,16 @@
 package com.github.almostreliable.energymeter.client.gui;
 
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+
 import com.github.almostreliable.energymeter.core.Constants.UI_COLORS;
-import com.github.almostreliable.energymeter.meter.MeterEntity;
+import com.github.almostreliable.energymeter.meter.MeterBlockEntity;
+import com.github.almostreliable.energymeter.network.AccuracyUpdatePacket;
 import com.github.almostreliable.energymeter.network.PacketHandler;
-import com.github.almostreliable.energymeter.network.packets.AccuracyUpdatePacket;
 import com.github.almostreliable.energymeter.util.GuiUtils;
 import com.github.almostreliable.energymeter.util.GuiUtils.TooltipBuilder;
 import com.github.almostreliable.energymeter.util.TextUtils;
@@ -11,12 +18,6 @@ import com.github.almostreliable.energymeter.util.TypeEnums.ACCURACY;
 import com.github.almostreliable.energymeter.util.TypeEnums.TEXT_BOX;
 import com.github.almostreliable.energymeter.util.TypeEnums.TRANSLATE_TYPE;
 import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.StringUtils;
 
 abstract class GenericTextBox extends EditBox {
@@ -92,10 +93,11 @@ abstract class GenericTextBox extends EditBox {
      * @param sync  whether the value should be synced to the server
      */
     protected void changeTextBoxValue(int value, boolean sync) {
-        setValue(String.valueOf(Math.max(value, MeterEntity.REFRESH_RATE)));
+        setValue(String.valueOf(Math.max(value, MeterBlockEntity.REFRESH_RATE)));
         if (sync) {
-            PacketHandler.CHANNEL.sendToServer(new AccuracyUpdatePacket(identifier,
-                Math.max(value, MeterEntity.REFRESH_RATE)
+            PacketHandler.CHANNEL.sendToServer(new AccuracyUpdatePacket(
+                identifier,
+                Math.max(value, MeterBlockEntity.REFRESH_RATE)
             ));
         }
     }
@@ -104,7 +106,7 @@ abstract class GenericTextBox extends EditBox {
      * Resets the text field to the refresh rate of the meter and syncs it.
      */
     void reset() {
-        changeTextBoxValue(MeterEntity.REFRESH_RATE, true);
+        changeTextBoxValue(MeterBlockEntity.REFRESH_RATE, true);
     }
 
     /**

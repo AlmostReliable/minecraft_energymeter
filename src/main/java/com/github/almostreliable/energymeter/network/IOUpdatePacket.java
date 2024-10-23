@@ -1,12 +1,13 @@
-package com.github.almostreliable.energymeter.network.packets;
+package com.github.almostreliable.energymeter.network;
+
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 
 import com.github.almostreliable.energymeter.core.Constants.SYNC_FLAGS;
-import com.github.almostreliable.energymeter.meter.MeterContainer;
+import com.github.almostreliable.energymeter.meter.MeterMenu;
 import com.github.almostreliable.energymeter.network.ClientToServerPacket;
 import com.github.almostreliable.energymeter.util.TypeEnums.BLOCK_SIDE;
 import com.github.almostreliable.energymeter.util.TypeEnums.IO_SETTING;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
 
 import javax.annotation.Nullable;
 
@@ -35,7 +36,7 @@ public class IOUpdatePacket extends ClientToServerPacket<IOUpdatePacket> {
 
     @Override
     public void handlePacket(IOUpdatePacket packet, @Nullable ServerPlayer player) {
-        if (player != null && player.containerMenu instanceof MeterContainer menu) {
+        if (player != null && player.containerMenu instanceof MeterMenu menu) {
             var entity = menu.getEntity();
             var level = entity.getLevel();
             if (level == null || !level.isLoaded(entity.getBlockPos())) return;

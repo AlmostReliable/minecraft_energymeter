@@ -1,12 +1,14 @@
 package com.github.almostreliable.energymeter.util;
 
-import com.almostreliable.energymeter.EnergyMeterConstants;
-import com.github.almostreliable.energymeter.util.TypeEnums.TRANSLATE_TYPE;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
+
+import com.almostreliable.energymeter.ModConstants;
+
+import com.github.almostreliable.energymeter.util.TypeEnums.TRANSLATE_TYPE;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -29,7 +31,7 @@ public final class TextUtils {
      * @return the generated {@link ResourceLocation}
      */
     public static ResourceLocation getRL(String key) {
-        return new ResourceLocation(EnergyMeterConstants.MOD_ID, key);
+        return ResourceLocation.fromNamespaceAndPath(ModConstants.MOD_ID, key);
     }
 
     /**
@@ -97,7 +99,7 @@ public final class TextUtils {
      * @return the translation key
      */
     private static String getTranslationKey(TRANSLATE_TYPE type, String key) {
-        return String.format("%s.%s.%s", type.toString().toLowerCase(), EnergyMeterConstants.MOD_ID, key);
+        return String.format("%s.%s.%s", type.toString().toLowerCase(), ModConstants.MOD_ID, key);
     }
 
     /**

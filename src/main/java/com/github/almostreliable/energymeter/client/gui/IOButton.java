@@ -1,21 +1,24 @@
 package com.github.almostreliable.energymeter.client.gui;
 
-import com.github.almostreliable.energymeter.network.PacketHandler;
-import com.github.almostreliable.energymeter.network.packets.IOUpdatePacket;
-import com.github.almostreliable.energymeter.util.GuiUtils.TooltipBuilder;
-import com.github.almostreliable.energymeter.util.TextUtils;
-import com.github.almostreliable.energymeter.util.TypeEnums.BLOCK_SIDE;
-import com.github.almostreliable.energymeter.util.TypeEnums.IO_SETTING;
-import com.github.almostreliable.energymeter.util.TypeEnums.TRANSLATE_TYPE;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Tuple;
 
+import com.github.almostreliable.energymeter.network.IOUpdatePacket;
+import com.github.almostreliable.energymeter.network.PacketHandler;
+import com.github.almostreliable.energymeter.util.GuiUtils.TooltipBuilder;
+import com.github.almostreliable.energymeter.util.TextUtils;
+import com.github.almostreliable.energymeter.util.TypeEnums.BLOCK_SIDE;
+import com.github.almostreliable.energymeter.util.TypeEnums.IO_SETTING;
+import com.github.almostreliable.energymeter.util.TypeEnums.TRANSLATE_TYPE;
+
 import java.util.Arrays;
 import java.util.List;
 
-import static com.github.almostreliable.energymeter.core.Constants.*;
+import static com.github.almostreliable.energymeter.core.Constants.IO_MODE_ID;
+import static com.github.almostreliable.energymeter.core.Constants.IO_SIDE_ID;
+import static com.github.almostreliable.energymeter.core.Constants.SIDE_CONFIG_ID;
 
 final class IOButton extends GenericButton {
 
@@ -116,7 +119,8 @@ final class IOButton extends GenericButton {
             .addComponent(TextUtils
                 .translate(TRANSLATE_TYPE.TOOLTIP, IO_SIDE_ID, ChatFormatting.GREEN)
                 .append(TextUtils.colorize(": ", ChatFormatting.GREEN))
-                .append(TextUtils.translate(TRANSLATE_TYPE.BLOCK_SIDE,
+                .append(TextUtils.translate(
+                    TRANSLATE_TYPE.BLOCK_SIDE,
                     side.toString().toLowerCase(),
                     ChatFormatting.WHITE
                 )))
@@ -124,7 +128,8 @@ final class IOButton extends GenericButton {
             .addComponent(TextUtils
                 .translate(TRANSLATE_TYPE.TOOLTIP, IO_MODE_ID, ChatFormatting.GREEN)
                 .append(TextUtils.colorize(": ", ChatFormatting.GREEN))
-                .append(TextUtils.translate(TRANSLATE_TYPE.IO_SETTING,
+                .append(TextUtils.translate(
+                    TRANSLATE_TYPE.IO_SETTING,
                     setting.toString().toLowerCase(),
                     ChatFormatting.WHITE
                 ))).addBlankLine()
@@ -140,7 +145,8 @@ final class IOButton extends GenericButton {
     private void renderIOOverlay(GuiGraphics guiGraphics) {
         var textureOffset = (setting.ordinal() - 1) * OVERLAY_SIZE;
         if (textureOffset >= 0) {
-            guiGraphics.blit(TextUtils.getRL("textures/gui/buttons/" + getTexture() + ".png"),
+            guiGraphics.blit(
+                TextUtils.getRL("textures/gui/buttons/" + getTexture() + ".png"),
                 getX(),
                 getY(),
                 BUTTON_SIZE,

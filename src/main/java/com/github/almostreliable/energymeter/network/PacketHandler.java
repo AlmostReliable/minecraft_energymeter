@@ -1,41 +1,51 @@
 package com.github.almostreliable.energymeter.network;
 
-import com.github.almostreliable.energymeter.core.Constants;
-import com.github.almostreliable.energymeter.network.packets.AccuracyUpdatePacket;
-import com.github.almostreliable.energymeter.network.packets.ClientSyncPacket;
-import com.github.almostreliable.energymeter.network.packets.IOUpdatePacket;
-import com.github.almostreliable.energymeter.network.packets.SettingUpdatePacket;
-import com.github.almostreliable.energymeter.util.TextUtils;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.IPayloadHandler;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public final class PacketHandler {
 
-    private static final ResourceLocation ID = TextUtils.getRL(Constants.NETWORK_ID);
     private static final String PROTOCOL = "1";
-    public static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
-        .named(ID)
-        .networkProtocolVersion(() -> PROTOCOL)
-        .clientAcceptedVersions(PROTOCOL::equals)
-        .serverAcceptedVersions(PROTOCOL::equals)
-        .simpleChannel();
 
     private PacketHandler() {}
 
-    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
-    public static void init() {
-        var id = -1;
-
-        // server to client
-        register(++id, ClientSyncPacket.class, new ClientSyncPacket());
-        // client to server
-        register(++id, AccuracyUpdatePacket.class, new AccuracyUpdatePacket());
-        register(++id, IOUpdatePacket.class, new IOUpdatePacket());
-        register(++id, SettingUpdatePacket.class, new SettingUpdatePacket());
+    public static void init(IEventBus modEventBus) {
+        modEventBus.addListener(PacketHandler::onPacketRegistration);
     }
 
-    private static <T> void register(int packetId, Class<T> clazz, Packet<T> packet) {
-        CHANNEL.registerMessage(packetId, clazz, packet::encode, packet::decode, packet::handle);
+    private static void onPacketRegistration(RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar(PROTOCOL);
+
+        // server to client
+        registrar.playToClient(
+            ClientSyncPacket.TYPE,
+            ClientSyncPacket.STREAM_CODEC,
+            wrapHandler(ClientSyncPacket::handle)
+        );
+
+        // client to server
+        registrar.playToServer(
+            AccuracyUpdatePacket.TYPE,
+            AccuracyUpdatePacket.STREAM_CODEC,
+            wrapHandler(AccuracyUpdatePacket::handle)
+        );
+        registrar.playToServer(
+            IOUpdatePacket.TYPE,
+            IOUpdatePacket.STREAM_CODEC,
+            wrapHandler(IOUpdatePacket::handle)
+        );
+        registrar.playToServer(
+            SettingUpdatePacket.TYPE,
+            SettingUpdatePacket.STREAM_CODEC,
+            wrapHandler(SettingUpdatePacket::handle)
+        );
+    }
+
+    private static <T extends CustomPacketPayload> IPayloadHandler<T> wrapHandler(IPayloadHandler<T> handler) {
+        return (payload, context) -> context.enqueueWork(() -> handler.handle(payload, context));
     }
 }

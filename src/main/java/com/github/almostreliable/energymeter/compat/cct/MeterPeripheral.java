@@ -1,28 +1,38 @@
 package com.github.almostreliable.energymeter.compat.cct;
 
+import net.minecraft.core.Direction;
+
 import com.almostreliable.energymeter.EnergyMeterConstants;
+
 import com.github.almostreliable.energymeter.compat.IMeterEntityObserver;
-import com.github.almostreliable.energymeter.meter.MeterEntity;
+import com.github.almostreliable.energymeter.meter.MeterBlockEntity;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import net.minecraft.core.Direction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.github.almostreliable.energymeter.core.Constants.*;
+import static com.github.almostreliable.energymeter.core.Constants.ACCURACY_ID;
+import static com.github.almostreliable.energymeter.core.Constants.INTERVAL_ID;
+import static com.github.almostreliable.energymeter.core.Constants.MODE_ID;
+import static com.github.almostreliable.energymeter.core.Constants.NUMBER_MODE_ID;
+import static com.github.almostreliable.energymeter.core.Constants.SIDE_CONFIG_ID;
+import static com.github.almostreliable.energymeter.core.Constants.STATUS_ID;
+import static com.github.almostreliable.energymeter.core.Constants.SYNC_FLAGS;
+import static com.github.almostreliable.energymeter.core.Constants.THRESHOLD_ID;
+import static com.github.almostreliable.energymeter.core.Constants.TRANSFER_RATE_ID;
 
 @SuppressWarnings({"unused", "FinalMethod"})
 public class MeterPeripheral implements IPeripheral, IMeterEntityObserver {
 
-    private final MeterEntity entity;
+    private final MeterBlockEntity entity;
     private IComputerAccess computer;
 
-    MeterPeripheral(MeterEntity entity) {
+    MeterPeripheral(MeterBlockEntity entity) {
         this.entity = entity;
     }
 
@@ -47,7 +57,7 @@ public class MeterPeripheral implements IPeripheral, IMeterEntityObserver {
     }
 
     @Override
-    public void onMeterTileChanged(MeterEntity entity, int flags) {
+    public void onMeterTileChanged(MeterBlockEntity entity, int flags) {
         if (!this.entity.equals(entity)) return;
 
         Map<String, Object> data = new HashMap<>();
@@ -63,7 +73,7 @@ public class MeterPeripheral implements IPeripheral, IMeterEntityObserver {
     }
 
     @Override
-    public void onMeterTileRemoved(MeterEntity entity) {
+    public void onMeterTileRemoved(MeterBlockEntity entity) {
         computer.queueEvent("em_removed");
     }
 

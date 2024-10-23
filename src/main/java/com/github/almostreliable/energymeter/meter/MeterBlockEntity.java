@@ -1,17 +1,5 @@
 package com.github.almostreliable.energymeter.meter;
 
-import com.github.almostreliable.energymeter.compat.CapabilityAdapterFactory;
-import com.github.almostreliable.energymeter.compat.ICapabilityAdapter;
-import com.github.almostreliable.energymeter.compat.IMeterEntityObserver;
-import com.github.almostreliable.energymeter.compat.cct.MeterPeripheral;
-import com.github.almostreliable.energymeter.component.SideConfiguration;
-import com.github.almostreliable.energymeter.component.SidedEnergyStorage;
-import com.github.almostreliable.energymeter.core.Setup.Entities;
-import com.github.almostreliable.energymeter.network.PacketHandler;
-import com.github.almostreliable.energymeter.network.packets.ClientSyncPacket;
-import com.github.almostreliable.energymeter.network.packets.SettingUpdatePacket;
-import com.github.almostreliable.energymeter.util.TextUtils;
-import com.github.almostreliable.energymeter.util.TypeEnums.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -24,6 +12,25 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+
+import com.github.almostreliable.energymeter.compat.CapabilityAdapterFactory;
+import com.github.almostreliable.energymeter.compat.ICapabilityAdapter;
+import com.github.almostreliable.energymeter.compat.IMeterEntityObserver;
+import com.github.almostreliable.energymeter.compat.cct.MeterPeripheral;
+import com.github.almostreliable.energymeter.component.SideConfiguration;
+import com.github.almostreliable.energymeter.component.SidedEnergyStorage;
+import com.github.almostreliable.energymeter.core.Setup.Entities;
+import com.github.almostreliable.energymeter.network.ClientSyncPacket;
+import com.github.almostreliable.energymeter.network.PacketHandler;
+import com.github.almostreliable.energymeter.network.SettingUpdatePacket;
+import com.github.almostreliable.energymeter.util.TextUtils;
+import com.github.almostreliable.energymeter.util.TypeEnums.ACCURACY;
+import com.github.almostreliable.energymeter.util.TypeEnums.IO_SETTING;
+import com.github.almostreliable.energymeter.util.TypeEnums.MODE;
+import com.github.almostreliable.energymeter.util.TypeEnums.NUMBER_MODE;
+import com.github.almostreliable.energymeter.util.TypeEnums.SETTING;
+import com.github.almostreliable.energymeter.util.TypeEnums.STATUS;
+import com.github.almostreliable.energymeter.util.TypeEnums.TRANSLATE_TYPE;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -33,11 +40,30 @@ import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
-import static com.github.almostreliable.energymeter.core.Constants.*;
+import static com.github.almostreliable.energymeter.core.Constants.ACCURACY_ID;
+import static com.github.almostreliable.energymeter.core.Constants.INTERVAL_ID;
+import static com.github.almostreliable.energymeter.core.Constants.METER_ID;
+import static com.github.almostreliable.energymeter.core.Constants.MODE_ID;
+import static com.github.almostreliable.energymeter.core.Constants.NUMBER_MODE_ID;
+import static com.github.almostreliable.energymeter.core.Constants.PIPEZ_ID;
+import static com.github.almostreliable.energymeter.core.Constants.SIDE_CONFIG_ID;
+import static com.github.almostreliable.energymeter.core.Constants.STATUS_ID;
+import static com.github.almostreliable.energymeter.core.Constants.SYNC_FLAGS;
+import static com.github.almostreliable.energymeter.core.Constants.THRESHOLD_ID;
+import static com.github.almostreliable.energymeter.core.Constants.TRANSFER_RATE_ID;
 
-public class MeterEntity extends BlockEntity implements MenuProvider {
+public class MeterBlockEntity extends BlockEntity implements MenuProvider {
 
     public static final int REFRESH_RATE = 5;
     private final EnumMap<Direction, LazyOptional<IEnergyStorage>> outputCache = new EnumMap<>(Direction.class);
@@ -61,7 +87,7 @@ public class MeterEntity extends BlockEntity implements MenuProvider {
     private double zeroThreshold;
 
     @SuppressWarnings("ThisEscapedInObjectConstruction")
-    public MeterEntity(BlockPos pos, BlockState state) {
+    public MeterBlockEntity(BlockPos pos, BlockState state) {
         super(Entities.METER.get(), pos, state);
         energyStorage = SidedEnergyStorage.create(this);
         sideConfig = new SideConfiguration(state);
@@ -142,7 +168,8 @@ public class MeterEntity extends BlockEntity implements MenuProvider {
      */
     public void syncData(int flags) {
         if (level == null || level.isClientSide) return;
-        var packet = new ClientSyncPacket(worldPosition,
+        var packet = new ClientSyncPacket(
+            worldPosition,
             flags,
             sideConfig,
             transferRate,
@@ -153,7 +180,8 @@ public class MeterEntity extends BlockEntity implements MenuProvider {
             interval,
             threshold
         );
-        PacketHandler.CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunkAt(worldPosition)),
+        PacketHandler.CHANNEL.send(
+            PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunkAt(worldPosition)),
             packet
         );
 
@@ -318,7 +346,7 @@ public class MeterEntity extends BlockEntity implements MenuProvider {
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int containerID, Inventory inventory, Player player) {
-        return new MeterContainer(this, containerID);
+        return new MeterMenu(this, containerID);
     }
 
     /**
@@ -409,7 +437,7 @@ public class MeterEntity extends BlockEntity implements MenuProvider {
         var target = outputCache.get(direction);
         if (target == null) {
             ICapabilityProvider provider = level.getBlockEntity(worldPosition.relative(direction));
-            if (provider == null || provider instanceof MeterEntity) return null;
+            if (provider == null || provider instanceof MeterBlockEntity) return null;
             target = provider.getCapability(ForgeCapabilities.ENERGY, direction.getOpposite());
             outputCache.put(direction, target);
             target.addListener(self -> outputCache.put(direction, null));
@@ -501,7 +529,7 @@ public class MeterEntity extends BlockEntity implements MenuProvider {
         var target = inputCache;
         if (target == null) {
             ICapabilityProvider provider = level.getBlockEntity(worldPosition.relative(direction));
-            if (provider instanceof MeterEntity) return false;
+            if (provider instanceof MeterBlockEntity) return false;
             if (provider == null) {
                 var state = level.getBlockState(worldPosition.relative(direction));
                 // noinspection deprecation
