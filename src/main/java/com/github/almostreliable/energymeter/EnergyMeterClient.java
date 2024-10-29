@@ -20,7 +20,7 @@ public final class EnergyMeterClient {
     }
 
     private void registerScreens(RegisterMenuScreensEvent event) {
-        event.register(Registration.METER.get(), MeterScreen::new);
+        event.register(Registration.METER_MENU.get(), MeterScreen::new);
     }
 
     private void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
