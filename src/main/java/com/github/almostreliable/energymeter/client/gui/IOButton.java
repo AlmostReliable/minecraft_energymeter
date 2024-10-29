@@ -12,6 +12,7 @@ import com.github.almostreliable.energymeter.util.TextUtils;
 import com.github.almostreliable.energymeter.util.TypeEnums.BLOCK_SIDE;
 import com.github.almostreliable.energymeter.util.TypeEnums.IO_SETTING;
 import com.github.almostreliable.energymeter.util.TypeEnums.TRANSLATE_TYPE;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -87,7 +88,7 @@ final class IOButton extends GenericButton {
 
     @Override
     protected void clickHandler() {
-        PacketHandler.CHANNEL.sendToServer(new IOUpdatePacket(side, setting));
+        PacketDistributor.sendToServer(new IOUpdatePacket(side, setting));
         tooltip = setupTooltip();
     }
 

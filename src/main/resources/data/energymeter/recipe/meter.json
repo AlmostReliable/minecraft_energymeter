@@ -23,6 +23,7 @@
     }
   },
   "result": {
-    "item": "energymeter:meter"
+    "count": 1,
+    "id": "energymeter:meter"
   }
 }

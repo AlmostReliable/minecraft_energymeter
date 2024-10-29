@@ -1,48 +1,41 @@
 package com.github.almostreliable.energymeter.network;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-
 import com.github.almostreliable.energymeter.core.Constants.SYNC_FLAGS;
 import com.github.almostreliable.energymeter.meter.MeterMenu;
-import com.github.almostreliable.energymeter.network.ClientToServerPacket;
 import com.github.almostreliable.energymeter.util.TypeEnums.BLOCK_SIDE;
 import com.github.almostreliable.energymeter.util.TypeEnums.IO_SETTING;
+import com.github.almostreliable.energymeter.util.Utils;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import javax.annotation.Nullable;
+public record IOUpdatePacket(BLOCK_SIDE side, IO_SETTING setting) implements CustomPacketPayload {
+    static final Type<IOUpdatePacket> TYPE = new Type<>(Utils.getRL("io_update"));
+    static final StreamCodec<ByteBuf, IOUpdatePacket> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT, p -> p.side.ordinal(),
+            ByteBufCodecs.VAR_INT, p -> p.setting.ordinal(),
+            IOUpdatePacket::new
+    );
 
-public class IOUpdatePacket extends ClientToServerPacket<IOUpdatePacket> {
-
-    private BLOCK_SIDE side;
-    private IO_SETTING setting;
-
-    public IOUpdatePacket(BLOCK_SIDE side, IO_SETTING setting) {
-        this.side = side;
-        this.setting = setting;
-    }
-
-    public IOUpdatePacket() {}
-
-    @Override
-    public void encode(IOUpdatePacket packet, FriendlyByteBuf buffer) {
-        buffer.writeInt(packet.side.ordinal());
-        buffer.writeInt(packet.setting.ordinal());
-    }
-
-    @Override
-    public IOUpdatePacket decode(FriendlyByteBuf buffer) {
-        return new IOUpdatePacket(BLOCK_SIDE.values()[buffer.readInt()], IO_SETTING.values()[buffer.readInt()]);
+    public IOUpdatePacket(Integer sideIndex, Integer settingsIndex) {
+        this(BLOCK_SIDE.values()[sideIndex], IO_SETTING.values()[settingsIndex]);
     }
 
     @Override
-    public void handlePacket(IOUpdatePacket packet, @Nullable ServerPlayer player) {
-        if (player != null && player.containerMenu instanceof MeterMenu menu) {
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
+
+    public static void handle(IOUpdatePacket payload, IPayloadContext context) {
+        if (context.player().containerMenu instanceof MeterMenu menu) {
             var entity = menu.getEntity();
             var level = entity.getLevel();
             if (level == null || !level.isLoaded(entity.getBlockPos())) return;
-            entity.getSideConfig().set(packet.side, packet.setting);
+            entity.getSideConfig().set(payload.side, payload.setting);
             entity.updateNeighbors();
-            entity.updateCache(entity.getSideConfig().getDirectionFromSide(packet.side));
+            entity.updateCache(entity.getSideConfig().getDirectionFromSide(payload.side));
             entity.syncData(SYNC_FLAGS.SIDE_CONFIG);
             entity.setChanged();
         }

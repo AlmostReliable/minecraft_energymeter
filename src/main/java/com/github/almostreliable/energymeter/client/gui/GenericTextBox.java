@@ -18,6 +18,7 @@ import com.github.almostreliable.energymeter.util.TypeEnums.ACCURACY;
 import com.github.almostreliable.energymeter.util.TypeEnums.TEXT_BOX;
 import com.github.almostreliable.energymeter.util.TypeEnums.TRANSLATE_TYPE;
 import com.mojang.blaze3d.platform.InputConstants;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.commons.lang3.StringUtils;
 
 abstract class GenericTextBox extends EditBox {
@@ -95,7 +96,7 @@ abstract class GenericTextBox extends EditBox {
     protected void changeTextBoxValue(int value, boolean sync) {
         setValue(String.valueOf(Math.max(value, MeterBlockEntity.REFRESH_RATE)));
         if (sync) {
-            PacketHandler.CHANNEL.sendToServer(new AccuracyUpdatePacket(
+            PacketDistributor.sendToServer(new AccuracyUpdatePacket(
                 identifier,
                 Math.max(value, MeterBlockEntity.REFRESH_RATE)
             ));

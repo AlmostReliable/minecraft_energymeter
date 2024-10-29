@@ -4,9 +4,11 @@ import com.github.almostreliable.energymeter.meter.MeterBlock;
 import com.github.almostreliable.energymeter.util.TypeEnums.BLOCK_SIDE;
 import com.github.almostreliable.energymeter.util.TypeEnums.IO_SETTING;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -95,7 +97,7 @@ public class SideConfiguration implements INBTSerializable<CompoundTag> {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         var nbt = new CompoundTag();
         for (var direction : Direction.values()) {
             nbt.putInt(direction.toString(), config.get(direction).ordinal());
@@ -104,7 +106,7 @@ public class SideConfiguration implements INBTSerializable<CompoundTag> {
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
         for (var direction : Direction.values()) {
             config.put(direction, IO_SETTING.values()[nbt.getInt(direction.toString())]);
         }

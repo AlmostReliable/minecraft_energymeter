@@ -1,7 +1,5 @@
 package com.github.almostreliable.energymeter.compat;
 
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
 
 public interface ICapabilityAdapter<T> {
 
@@ -11,12 +9,12 @@ public interface ICapabilityAdapter<T> {
      * @param cap The capability to check.
      * @return True if the capability is compatible, false otherwise.
      */
-    boolean isCapability(Capability<?> cap);
+//    boolean isCapability(Capability<?> cap);
 
     /**
      * Gets the capability instance as a lazy optional.
      *
      * @return The capability instance as a lazy optional.
      */
-    LazyOptional<T> getLazyAdapter();
+//    LazyOptional<T> getLazyAdapter();
 }

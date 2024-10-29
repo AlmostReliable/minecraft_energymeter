@@ -8,7 +8,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextColor;
 
 import com.github.almostreliable.energymeter.core.Constants.UI_COLORS;
-import com.github.almostreliable.energymeter.network.PacketHandler;
 import com.github.almostreliable.energymeter.network.SettingUpdatePacket;
 import com.github.almostreliable.energymeter.util.GuiUtils;
 import com.github.almostreliable.energymeter.util.GuiUtils.TooltipBuilder;
@@ -17,6 +16,7 @@ import com.github.almostreliable.energymeter.util.TypeEnums.ACCURACY;
 import com.github.almostreliable.energymeter.util.TypeEnums.MODE;
 import com.github.almostreliable.energymeter.util.TypeEnums.SETTING;
 import com.github.almostreliable.energymeter.util.TypeEnums.TRANSLATE_TYPE;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class SettingButton extends GenericButton {
 
@@ -49,7 +49,7 @@ public class SettingButton extends GenericButton {
 
     @Override
     protected void clickHandler() {
-        PacketHandler.CHANNEL.sendToServer(new SettingUpdatePacket(setting));
+        PacketDistributor.sendToServer(new SettingUpdatePacket(setting));
         container.getEntity().updateSetting(setting);
         if (setting == SETTING.ACCURACY) {
             screen.getIntervalBox().reset();

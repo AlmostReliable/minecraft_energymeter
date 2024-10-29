@@ -1,15 +1,13 @@
 package com.github.almostreliable.energymeter.compat.cct;
 
-import net.minecraft.core.Direction;
-
-import com.almostreliable.energymeter.EnergyMeterConstants;
-
+import com.almostreliable.energymeter.ModConstants;
 import com.github.almostreliable.energymeter.compat.IMeterEntityObserver;
 import com.github.almostreliable.energymeter.meter.MeterBlockEntity;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import net.minecraft.core.Direction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -80,7 +78,7 @@ public class MeterPeripheral implements IPeripheral, IMeterEntityObserver {
     @Nonnull
     @Override
     public String getType() {
-        return EnergyMeterConstants.MOD_ID;
+        return ModConstants.MOD_ID;
     }
 
     @Override
