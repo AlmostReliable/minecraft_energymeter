@@ -16,7 +16,7 @@
       "item": "minecraft:redstone"
     },
     "g": {
-      "tag": "forge:glass_panes"
+      "tag": "c:glass_panes"
     },
     "o": {
       "item": "minecraft:observer"
