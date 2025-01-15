@@ -1,0 +1,77 @@
+{
+  "label.energymeter.itemGroup": "Energy Meter",
+
+  "block.energymeter.meter": "エネルギーメーター",
+  "container.energymeter.meter": "エネルギーメーター",
+
+  "label.energymeter.meter": "エネルギーメーター",
+  "label.energymeter.transfer_rate": "伝達速度",
+  "label.energymeter.number": "ナンバー",
+  "label.energymeter.status": "状態",
+  "label.energymeter.mode": "モード",
+  "label.energymeter.accuracy": "精度",
+  "label.energymeter.interval": "I",
+  "label.energymeter.threshold": "T",
+
+  "tooltip.energymeter.side_config": "入出力設定",
+  "tooltip.energymeter.io_side": "面",
+  "tooltip.energymeter.io_mode": "モード",
+  "tooltip.energymeter.current": "現在",
+
+  "tooltip.energymeter.number": "ナンバー設定",
+  "tooltip.energymeter.number_desc_1": "伝達速度の形式を長くするか短くするかを定義します。",
+  "tooltip.energymeter.number_desc_2": "1,000 FE/t を超える場合にのみ数値に影響します。",
+
+  "tooltip.energymeter.mode": "モード設定",
+  "tooltip.energymeter.mode_desc_1": "エネルギーメーターのモードを定義します。",
+  "tooltip.energymeter.mode_desc_2": "通常のケーブルと同じように動作します。エネルギーは均等に分配され、入力/出力によってのみ制限されます。",
+  "tooltip.energymeter.mode_desc_3": "ゴミ箱のように機能します。入ってくるエネルギーは無効になります。これを使用すると、最大入力エネルギーを計測できます。",
+
+  "tooltip.energymeter.accuracy": "精度設定",
+  "tooltip.energymeter.accuracy_desc_1": "エネルギーメーターの精度を定義します。",
+  "tooltip.energymeter.accuracy_desc_2": "過去 5 ティックの平均レートを表示します。各期間ごとに、以前の値は破棄され、現在の期間のみが表示されるため、エネルギーの流れが一貫していない場合にスパイクが発生します。",
+  "tooltip.energymeter.accuracy_desc_3": "カスタムティック間隔を受け入れ、その期間の平均を計算します。さらに、前の期間のレートを考慮してスパイクを平滑化し、複数のサイクルにわたって精度を向上させます。",
+
+  "tooltip.energymeter.interval": "更新間隔",
+  "tooltip.energymeter.interval_desc_1": "伝達速度の各計算間のティック数 (1 秒 = 20 ティック) を定義します。",
+  "tooltip.energymeter.interval_desc_2": "値を大きくするとスパイクは均一になりますが、ディスプレイの更新が遅くなります。",
+
+  "tooltip.energymeter.threshold": "ゼロしきい値",
+  "tooltip.energymeter.threshold_desc_1": "リセットしきい値をティック単位で定義します (1 秒 = 20 ティック)。この期間中にエネルギーが受信されない場合、計測はゼロにリセットされます。",
+  "tooltip.energymeter.threshold_desc_2": "値が小さいほど、エネルギー損失がより早く検出されます。間隔よりも高い値は役に立たないため、設定できません。",
+
+  "tooltip.energymeter.action_click": "クリック",
+  "tooltip.energymeter.action_hold": "長押し",
+  "tooltip.energymeter.action_1": "で切り替え",
+  "tooltip.energymeter.action_2": "でリセット",
+  "tooltip.energymeter.action_3": "で切り替え",
+  "tooltip.energymeter.action_4": "で詳細情報を表示",
+  "tooltip.energymeter.action_5": "で間隔を変更",
+  "tooltip.energymeter.action_6": "で間隔を適用",
+
+  "block_side.energymeter.bottom": "下面",
+  "block_side.energymeter.top": "上面",
+  "block_side.energymeter.front": "正面",
+  "block_side.energymeter.back": "背面",
+  "block_side.energymeter.left": "左面",
+  "block_side.energymeter.right": "右面",
+
+  "io_setting.energymeter.off": "オフ",
+  "io_setting.energymeter.in": "入力",
+  "io_setting.energymeter.out": "出力",
+  "io_setting.energymeter.screen": "スクリーン",
+
+  "number.energymeter.long": "長",
+  "number.energymeter.short": "短",
+
+  "status.energymeter.disconnected": "切断",
+  "status.energymeter.connected": "接続",
+  "status.energymeter.transferring": "伝達",
+  "status.energymeter.consuming": "消費",
+
+  "mode.energymeter.transfer": "伝達",
+  "mode.energymeter.consumer": "消費",
+
+  "accuracy.energymeter.exact": "正確",
+  "accuracy.energymeter.interval": "間隔"
+}
